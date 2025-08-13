@@ -6,6 +6,42 @@
     <title>Cocktail App</title>
 </head>
 <body>
-    <h1>Welcome to Cocktails & Chill</h1>
+    <h1>Cocktails & Chill 🍹</h1>
+
+    <!-- Search Form -->
+
+    <form method="POST">
+        <input type="text" name="cocktail_name" placeholder="Search for a cocktail..." required>
+        <button type="submit">Search</button>
+    </form>
+
+
+    <!-- Show Message if provided -->
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+
+    <!--  Display Ccoktails  -->
+    {% if cocktails %}
+        <h2>Search Results:</h2>
+            {% for cocktail in cocktails %}
+                <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+                    <h3>{{ cocktail.name }}</h3>
+                    <img src="{{ cocktail.image }}" alt="{{ cocktail.name }}" width="200">
+                    <!-- <p><strong>Category:</strong>{{ cocktail.category }}</p> -->
+                    <p><strong>Instructions:</strong>{{ cocktail.instructions }}</p>
+                    <p><strong>What You'll Need:</strong></p>
+                    <ul>
+                        {% for item in cocktail.ingredients %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+    {% else %}
+        <p>No results found. Try searching for another cocktail!</p>
+    {% endif %}
+
 </body>
 </html>
