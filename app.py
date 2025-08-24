@@ -1,11 +1,17 @@
 import requests
 from flask import Flask, render_template, request
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 app = Flask(__name__)
 
 # FUNCTION TO GET COCKTAILS FROM API
 def get_cocktails(query="margarita"):
-    url = f"https://www.thecocktaildb.com/api/json/v1/1/search.php?s={query}"
+    url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/search.php?s={query}"
     # print("Fetching from URL:", url)
     response = requests.get(url)
     data = response.json()
@@ -52,7 +58,7 @@ def get_cocktails(query="margarita"):
 
 # FUNCTION TO GET RANDOM COCKTAIL
 def get_random_cocktail():
-    url = "https://www.thecocktaildb.com/api/json/v1/1/random.php"
+    url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/random.php"
     response = requests.get(url)
     data = response.json()
     drinks = data.get("drinks", [])
@@ -77,12 +83,6 @@ def get_random_cocktail():
         "ingredients": ingredients
     }
 
-
-# RANDOM ROUTE
-# @app.route('/random')
-# def random_cocktail():
-#     cocktail = get_random_cocktail()
-#     return render_template('index.html', cocktail=cocktail)
 
 # HOMEPAGE ROUTE
 @app.route('/', methods=["GET", "POST"])
