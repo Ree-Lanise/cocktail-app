@@ -12,17 +12,23 @@
 
     <form method="POST">
         <input type="text" name="cocktail_name" placeholder="Search for a cocktail..." required>
-        <button type="submit">Search</button>
+        <button type="submit" name="action" value="search">Search</button>
+        <!-- <button type="submit" name="action" value="random">Random Cocktail 🍸</button> -->
+    </form>
+
+    <!-- Random Cocktail Button -->
+    <form action="/" method="POST" style="margin-top: 10px;">
+        <button type="submit" name="action" value="random"> 🍸 Random Cocktail</button>
     </form>
 
 
     <!-- Show Message if provided -->
     {% if message %}
-        <p>{{ message }}</p>
+        <p><strong>{{ message }}</strong></p>
     {% endif %}
 
 
-    <!--  Display Ccoktails  -->
+    <!--  Display Cocktails  -->
     {% if cocktails %}
         <h2>Search Results:</h2>
             {% for cocktail in cocktails %}
@@ -39,8 +45,6 @@
                     </ul>
                 </div>
             {% endfor %}
-    {% else %}
-        <p>No results found. Try searching for another cocktail!</p>
     {% endif %}
 
 </body>
