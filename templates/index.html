@@ -12,7 +12,11 @@
     <title>Cocktail App</title>
 </head>
 <body>
-    <h1 class="text-6x6 font-bold underline text-clifford">Cocktails & Chill 🍹</h1>
+    <h1 class="text-5xl font-bold text-clifford mt4">
+        <a href="/" class="hover:opacity-80 cursor-pointer no-underline">
+            Cocktails & Chill 🍹
+        </a>
+    </h1>
 
     <!-- Search Form -->
 
@@ -33,21 +37,23 @@
     {% endif %}
 
 
-    <!--  Display Cocktails  -->
+    <!--  Display Cocktails without details -->
     {% if cocktails %}
-        <h2>Search Results:</h2>
             {% for cocktail in cocktails %}
                 <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-                    <h3>{{ cocktail.name }}</h3>
-                    <img src="{{ cocktail.image }}" alt="{{ cocktail.name }}" width="200">
+                    <a href="/details/{{ cocktail.id }}" style="text-decoration:none; color:black;">
+                        <h3>{{ cocktail.name }}</h3>
+                        <img src="{{ cocktail.image }}" alt="{{ cocktail.name }}" width="200">
+                    </a>
+                    
                     <!-- <p><strong>Category:</strong>{{ cocktail.category }}</p> -->
-                    <p><strong>Instructions:</strong>{{ cocktail.instructions }}</p>
-                    <p><strong>What You'll Need:</strong></p>
-                    <ul>
-                        {% for item in cocktail.ingredients %}
-                            <li>{{ item }}</li>
-                        {% endfor %}
-                    </ul>
+                    <!-- <p><strong>Instructions:</strong>{{ cocktail.instructions }}</p> -->
+                    <!-- <p><strong>What You'll Need:</strong></p> -->
+                    <!-- <ul> -->
+                        <!-- {% for item in cocktail.ingredients %} -->
+                            <!-- <li>{{ item }}</li> -->
+                        <!-- {% endfor %} -->
+                    <!-- </ul> -->
                 </div>
             {% endfor %}
     {% endif %}

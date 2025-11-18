@@ -12,49 +12,52 @@ app = Flask(__name__)
 # FUNCTION TO GET COCKTAILS FROM API
 def get_cocktails(query="margarita"):
     url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/search.php?s={query}"
-    # print("Fetching from URL:", url)
     response = requests.get(url)
     data = response.json()
-    print(data)
-    drinks = data.get("drinks", [])
-
-    # if drinks == None:
-    #     return []
+    drinks = data.get("drinks", []) or []
 
     # Remove duplicates
-    unique_drinks = []
-    seen_names = set()
+    # unique_drinks = []
+    # seen_names = set()
+
+    # for drink in drinks:
+    #     name = drink.get("strDrink")
+    #     if name not in seen_names:
+    #         seen_names.add(name)
+    #         unique_drinks.append(drink)
+
+
+    # Building cocktail list
+    cocktails = []
 
     for drink in drinks:
-        name = drink.get("strDrink")
-        if name not in seen_names:
-            seen_names.add(name)
-            unique_drinks.append(drink)
+         cocktails.append({
+              "id": drink.get("idDrink"),
+              "name": drink.get("strDrink"),
+              "image": drink.get("strDrinkThumb")
 
+         })
 
-    # Building final list w/ details
-    full_cocktail_list = []
-
-    if unique_drinks:
-        for drink in drinks:
-            # collecting ingredients and measures
-            ingredients = []
-            #cocktailDB has upto 15 ingredients
-            for i in range(1, 16):
-                ingredient = drink.get(f"strIngredient{i}")
-                measure = drink.get(f"strMeasure{i}")
-                if ingredient and ingredient.strip():
-                    ingredients.append(
-                        f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
-                        ) 
-            full_cocktail_list.append({
-                "name": drink.get("strDrink"),
-                "image": drink.get("strDrinkThumb"), 
-                "instructions": drink.get("strInstructions"),
-                "ingredients": ingredients
-            })
+    # if unique_drinks:
+    #     for drink in drinks:
+    #         # collecting ingredients and measures
+    #         ingredients = []
+    #         #cocktailDB has upto 15 ingredients
+    #         for i in range(1, 16):
+    #             ingredient = drink.get(f"strIngredient{i}")
+    #             measure = drink.get(f"strMeasure{i}")
+    #             if ingredient and ingredient.strip():
+    #                 ingredients.append(
+    #                     f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
+    #                     ) 
+    #         full_cocktail_list.append({
+    #             "name": drink.get("strDrink"),
+    #             "image": drink.get("strDrinkThumb"), 
+    #             "instructions": drink.get("strInstructions"),
+    #             "ingredients": ingredients
+    #         })
                 
-    return full_cocktail_list
+    return cocktails
 
 # FUNCTION TO GET RANDOM COCKTAIL
 def get_random_cocktail():
@@ -68,19 +71,19 @@ def get_random_cocktail():
     
     drink = drinks[0]
 
-    ingredients = []
-    for i in range(1, 16):
-                ingredient = drink.get(f"strIngredient{i}")
-                measure = drink.get(f"strMeasure{i}")
-                if ingredient and ingredient.strip():
-                    ingredients.append(
-                        f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
-                        ) 
+    # ingredients = []
+    # for i in range(1, 16):
+    #             ingredient = drink.get(f"strIngredient{i}")
+    #             measure = drink.get(f"strMeasure{i}")
+    #             if ingredient and ingredient.strip():
+    #                 ingredients.append(
+    #                     f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
+    #                     ) 
     return {
+        "id": drink.get("idDrink"),
         "name": drink.get("strDrink"),
         "image": drink.get("strDrinkThumb"), 
-        "instructions": drink.get("strInstructions"),
-        "ingredients": ingredients
+        
     }
 
 
@@ -114,7 +117,7 @@ def home():
         # ELSE STATEMENT FOR GET
     else:
         # pass
-        return render_template('index.html', cocktails={})
+        return render_template('index.html', cocktails=[], message=None)
 
 if __name__ == '__main__':
     app.run(debug=True)
