@@ -41,7 +41,7 @@
     {% if cocktails %}
             {% for cocktail in cocktails %}
                 <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
-                    <a href="/details/{{ cocktail.id }}" style="text-decoration:none; color:black;">
+                    <a href="{{ url_for('cocktail_details', cocktail_id=cocktail.id) }}" style="text-decoration:none; color:inherit;">
                         <h3>{{ cocktail.name }}</h3>
                         <img src="{{ cocktail.image }}" alt="{{ cocktail.name }}" width="200">
                     </a>

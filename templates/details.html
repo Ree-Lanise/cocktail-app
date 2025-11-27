@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ cocktail.name if cocktail else "Cocktail details" }}</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+    header { margin-bottom: 1rem; }
+    img { border-radius: 8px; max-width: 100%; height: auto; }
+    .meta { color: #555; margin: .25rem 0; }
+    .ingredients { margin-top: .75rem; }
+    .back { margin-top: 1rem; display:inline-block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="/">Cocktails & Chill 🍹</a></h1>
+  </header>
+
+  {% if cocktail %}
+    <main>
+      <h2>{{ cocktail.name }}</h2>
+
+      {% if cocktail.image %}
+        <img src="{{ cocktail.image }}" alt="{{ cocktail.name }}" width="400">
+      {% endif %}
+
+      <div class="meta"><strong>Category:</strong> {{ cocktail.category or '—' }}</div>
+      <div class="meta"><strong>Alcoholic:</strong> {{ cocktail.alcoholic or '—' }}</div>
+      <div class="meta"><strong>Glass:</strong> {{ cocktail.glass or '—' }}</div>
+
+      <h3>Instructions</h3>
+      <p>{{ cocktail.instructions or 'No instructions available.' }}</p>
+
+      <h3>Ingredients</h3>
+      {% if cocktail.ingredients %}
+        <ul class="ingredients">
+          {% for item in cocktail.ingredients %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No ingredients listed.</p>
+      {% endif %}
+
+      <p>
+        <a class="back" href="javascript:history.back()">⬅️ Back</a>
+        &nbsp;|&nbsp;
+        <a href="/">Home</a>
+      </p>
+    </main>
+  {% else %}
+    <p>{{ message or "No details to show." }}</p>
+    <p><a href="/">Back to home</a></p>
+  {% endif %}
+</body>
+</html>

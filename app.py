@@ -9,7 +9,7 @@ API_KEY = os.getenv("API_KEY")
 
 app = Flask(__name__)
 
-# FUNCTION TO GET COCKTAILS FROM API
+# FUNCTION TO GET COCKTAILS FROM API:
 def get_cocktails(query="margarita"):
     url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/search.php?s={query}"
     response = requests.get(url)
@@ -27,7 +27,7 @@ def get_cocktails(query="margarita"):
     #         unique_drinks.append(drink)
 
 
-    # Building cocktail list
+    # BUILDING COCKTAIL LIST:
     cocktails = []
 
     for drink in drinks:
@@ -37,29 +37,47 @@ def get_cocktails(query="margarita"):
               "image": drink.get("strDrinkThumb")
 
          })
-
-    # if unique_drinks:
-    #     for drink in drinks:
-    #         # collecting ingredients and measures
-    #         ingredients = []
-    #         #cocktailDB has upto 15 ingredients
-    #         for i in range(1, 16):
-    #             ingredient = drink.get(f"strIngredient{i}")
-    #             measure = drink.get(f"strMeasure{i}")
-    #             if ingredient and ingredient.strip():
-    #                 ingredients.append(
-    #                     f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
-    #                     ) 
-    #         full_cocktail_list.append({
-    #             "name": drink.get("strDrink"),
-    #             "image": drink.get("strDrinkThumb"), 
-    #             "instructions": drink.get("strInstructions"),
-    #             "ingredients": ingredients
-    #         })
                 
     return cocktails
 
-# FUNCTION TO GET RANDOM COCKTAIL
+# FUNCTION TO GET FULL COCKTAIL DETAILS:
+def get_cocktail_details(cocktail_id):
+    url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/lookup.php?i={cocktail_id}"
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:
+        print("Error fetching details", e)
+        return None
+    
+    drinks = data.get("drinks") or []
+    if not drinks:
+        return None
+    
+    drink = drinks[0]
+
+    # COLLECTING INGREDIENTS AND MEASURES:
+    ingredients = []
+    # COCKTAILDB HAS UP TO 15 INGREDIENTS:
+    for i in range(1, 16):
+        ingredient = drink.get(f"strIngredient{i}")
+        measure = drink.get(f"strMeasure{i}")
+        if ingredient and ingredient.strip():
+            ingredients.append(f"{measure.strip() if measure else ''} {ingredient.strip()}".strip())
+
+    return {
+        "id": drink.get("idDrink"),
+        "name": drink.get("strDrink"),
+        "image": drink.get("strDrinkThumb"), 
+        "alcoholic": drink.get("strAlcoholic"),
+        "glass": drink.get("strGlass"),
+        "instructions": drink.get("strInstructions"),
+        "ingredients": ingredients
+    }
+
+
+# FUNCTION TO GET RANDOM COCKTAIL:
 def get_random_cocktail():
     url = f"https://www.thecocktaildb.com/api/json/v2/{API_KEY}/random.php"
     response = requests.get(url)
@@ -71,14 +89,6 @@ def get_random_cocktail():
     
     drink = drinks[0]
 
-    # ingredients = []
-    # for i in range(1, 16):
-    #             ingredient = drink.get(f"strIngredient{i}")
-    #             measure = drink.get(f"strMeasure{i}")
-    #             if ingredient and ingredient.strip():
-    #                 ingredients.append(
-    #                     f"{measure.strip() if measure else ''} {ingredient.strip()}".strip()
-    #                     ) 
     return {
         "id": drink.get("idDrink"),
         "name": drink.get("strDrink"),
@@ -87,7 +97,7 @@ def get_random_cocktail():
     }
 
 
-# HOMEPAGE ROUTE
+# HOMEPAGE ROUTE:
 @app.route('/', methods=["GET", "POST"])
 def home():
     cocktails = []
@@ -114,10 +124,23 @@ def home():
                 message = "No random cocktail found."
 
         return render_template('index.html', cocktails=cocktails, message=message)
-        # ELSE STATEMENT FOR GET
+        # ELSE STATEMENT FOR GET:
     else:
-        # pass
         return render_template('index.html', cocktails=[], message=None)
+    
+
+# COCKTAIL DETAILS ROUTE:
+@app.route('/details/<cocktail_id>')
+def cocktail_details(cocktail_id):
+    cocktail = get_cocktail_details(cocktail_id)
+    if not cocktail:
+        message = "Unable to fetch details."
+        return render_template('details.html', cocktail=None, message=message)
+    return render_template('details.html', cocktail=cocktail)
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
